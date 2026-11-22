@@ -76,7 +76,8 @@ button { font: inherit; color: inherit; }
 .section-title::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent); }
 
 /* Modes */
-.modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.modes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (min-width: 640px) { .modes { grid-template-columns: repeat(4, 1fr); } }
 .mode { border: 1.5px solid var(--line); background: var(--surface); border-radius: 16px; padding: 14px 6px; text-align: center; cursor: pointer; box-shadow: var(--shadow); min-height: 92px; }
 .mode .g { display: block; font-size: 1.6rem; color: var(--gold); line-height: 1.2; font-family: var(--serif); }
 .mode .t { display: block; font-weight: 600; margin-top: 4px; font-size: .95rem; }
@@ -230,6 +231,30 @@ button { font: inherit; color: inherit; }
 .done-box h2 { font-family: var(--serif); color: var(--accent); margin: 6px 0; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+/* Fișe complete */
+.wrap.wide { max-width: 1180px; }
+.fise-tabs { display: flex; justify-content: center; margin: 4px 0 16px; }
+.fise-tabs .seg { width: 100%; max-width: 460px; }
+.fise-tabs .seg button { flex: 1; }
+.fise { display: grid; gap: 20px; }
+.fise.both { grid-template-columns: 1fr; }
+@media (min-width: 900px) { .fise.both { grid-template-columns: 1fr 1fr; align-items: start; } }
+.doc { background: var(--surface); border: 1.5px solid var(--line); border-radius: 18px; padding: 20px 20px 10px; box-shadow: var(--shadow); position: relative; }
+.doc::before { content: ""; position: absolute; inset: 7px; border: 1px solid var(--gold-soft); border-radius: 13px; pointer-events: none; }
+.doc > h2 { font-family: var(--serif); color: var(--accent); margin: 0 0 2px; font-size: 1.35rem; text-align: center; }
+.doc > .sub { text-align: center; color: var(--muted); font-family: var(--serif); font-style: italic; margin: 0 0 14px; font-size: .95rem; }
+.doc h3 { font-family: var(--serif); font-size: 1.08rem; margin: 18px 0 8px; padding-bottom: 6px; border-bottom: 1px dashed var(--line); }
+.doc h3 .sec { color: var(--gold); margin-right: 6px; }
+.doc p { font-family: var(--serif); margin: 0 0 8px; line-height: 1.55; }
+.doc ul { margin: 0 0 6px; padding-left: 22px; }
+.doc li { margin: 5px 0; line-height: 1.45; }
+.doc .motto { font-size: 1.02rem; }
+@media print {
+  body { background: #fff; }
+  .top, .fise-tabs, .actions-col { display: none !important; }
+  .doc { box-shadow: none; break-inside: auto; }
+  .fise.both { grid-template-columns: 1fr; }
+}
 @media (prefers-reduced-motion: reduce) { .flip, .swipe.anim, .bar > i { transition: none !important; } .feedback { animation: none; } }
 </style>
 </head>
@@ -523,6 +548,7 @@ const DATA = {
 
   function screen(html) {
     setKeys(null);
+    $app.classList.remove("wide");
     $app.innerHTML = html;
     window.scrollTo(0, 0);
   }
@@ -543,7 +569,8 @@ const DATA = {
     const modes = [
       { id: "flash", g: "❦", t: "Flashcards" },
       { id: "quiz", g: "✠", t: "Quiz" },
-      { id: "recap", g: "❧", t: "Recapitulare" }
+      { id: "recap", g: "❧", t: "Recapitulare" },
+      { id: "fise", g: "☙", t: "Fișe complete" }
     ];
     const cats = [...DATA.categories.map(c => c.id), "toate"];
     const catHtml = cats.map(id => {
@@ -567,7 +594,7 @@ const DATA = {
       </div>
       <div class="section-title">Alege modul</div>
       <div class="modes">${modes.map(m => `<button class="mode" data-mode="${m.id}" aria-pressed="${pr.mode === m.id}"><span class="g">${m.g}</span><span class="t">${m.t}</span></button>`).join("")}</div>
-      <div id="catBlock" ${pr.mode === "recap" ? "hidden" : ""}>
+      <div id="catBlock" ${pr.mode === "recap" || pr.mode === "fise" ? "hidden" : ""}>
         <div class="section-title">Alege categoria</div>
         <div class="cats">${catHtml}</div>
         <div class="opts" id="optFlash" ${pr.mode !== "flash" ? "hidden" : ""}>
@@ -592,11 +619,11 @@ const DATA = {
       document.querySelectorAll("[data-mode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === pr.mode));
       document.querySelectorAll("[data-cat]").forEach(b => b.setAttribute("aria-pressed", b.dataset.cat === pr.cat));
       document.querySelectorAll("[data-qlen]").forEach(b => b.setAttribute("aria-pressed", +b.dataset.qlen === pr.qlen));
-      document.getElementById("catBlock").hidden = pr.mode === "recap";
+      document.getElementById("catBlock").hidden = pr.mode === "recap" || pr.mode === "fise";
       document.getElementById("optFlash").hidden = pr.mode !== "flash";
       document.getElementById("optQuiz").hidden = pr.mode !== "quiz";
       const sb = document.getElementById("startBtn");
-      sb.textContent = pr.mode === "recap" ? "Deschide recapitularea" : pr.mode === "quiz" ? "Începe quizul" : "Începe flashcards";
+      sb.textContent = pr.mode === "fise" ? "Deschide fișele" : pr.mode === "recap" ? "Deschide recapitularea" : pr.mode === "quiz" ? "Începe quizul" : "Începe flashcards";
       persist();
     };
     $app.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => { pr.mode = b.dataset.mode; upd(); });
@@ -606,6 +633,7 @@ const DATA = {
     document.getElementById("startBtn").onclick = () => {
       if (pr.mode === "flash") startFlash(pr.cat);
       else if (pr.mode === "quiz") startQuiz(buildQuiz(pr.cat, pr.qlen), pr.cat, false);
+      else if (pr.mode === "fise") renderFise();
       else renderRecap();
     };
     document.getElementById("resetBtn").onclick = () => {
@@ -1084,6 +1112,46 @@ const DATA = {
     `);
     document.getElementById("openAll").onclick = () => $app.querySelectorAll("details").forEach(d => d.open = true);
     document.getElementById("closeAll").onclick = () => $app.querySelectorAll("details").forEach(d => d.open = false);
+  }
+
+  // =========================================================
+  // FIȘE COMPLETE — rezumatul și structura eseului, integral
+  // =========================================================
+  function renderFise() {
+    const view = ["ambele", "rezumat", "eseu"].includes(P.prefs.fise) ? P.prefs.fise : "ambele";
+    const rez = `<section class="doc" id="docRez">
+      <h2>Rezumat pe capitole</h2>
+      <p class="sub">${esc(DATA.title)} · cele 4 capitole și mottourile lor</p>
+      ${DATA.chapters.map(c => `<h3>Capitolul ${esc(c.num)}</h3>
+        <blockquote class="motto">${esc(c.motto)}</blockquote>
+        ${c.text.map(t => `<p>${esc(t)}</p>`).join("")}`).join("")}
+    </section>`;
+    const ese = `<section class="doc" id="docEseu">
+      <h2>Structura eseului</h2>
+      <p class="sub">Particularitățile nuvelei istorice · §1–§7</p>
+      ${DATA.essay.map(p => `<h3><span class="sec">${esc(p.n)}</span>${esc(p.title)}</h3>
+        <ul>${p.points.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`).join("")}
+      <p class="note" style="margin:14px 0 10px"><b>Notă:</b> mottoul capitolului al IV-lea are „scula”, iar replica din text, citată la §6, are „îndrepta”.</p>
+    </section>`;
+    screen(`
+      ${header("Fișe complete", true)}
+      <div class="fise-tabs"><div class="seg" role="group" aria-label="Ce fișă afișez">
+        <button data-fv="ambele" aria-pressed="${view === "ambele"}">Ambele</button>
+        <button data-fv="rezumat" aria-pressed="${view === "rezumat"}">Rezumatul</button>
+        <button data-fv="eseu" aria-pressed="${view === "eseu"}">Eseul</button>
+      </div></div>
+      <div class="fise ${view === "ambele" ? "both" : ""}">
+        ${view !== "eseu" ? rez : ""}
+        ${view !== "rezumat" ? ese : ""}
+      </div>
+      <div class="actions-col">
+        <button class="btn" id="printBtn">Tipărește / salvează PDF</button>
+        <button class="btn primary" data-act="home">Acasă</button>
+      </div>
+    `);
+    $app.classList.add("wide");
+    $app.querySelectorAll("[data-fv]").forEach(b => b.onclick = () => { P.prefs.fise = b.dataset.fv; persist(); renderFise(); });
+    document.getElementById("printBtn").onclick = () => window.print();
   }
 
   renderHome();
