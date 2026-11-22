@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7a1f2b">
+<title>Lăpușneanul · Bac</title>
+<style>
+:root {
+  --bg: #f3e8d2;
+  --bg2: #ecdfc3;
+  --surface: #fbf6ea;
+  --ink: #2b1d14;
+  --muted: #6e5a46;
+  --accent: #7a1f2b;
+  --accent-ink: #fff8ec;
+  --gold: #a87a26;
+  --gold-soft: #e9d6a6;
+  --line: #d9c49b;
+  --ok: #2f6b3a;
+  --ok-bg: #e3efd9;
+  --bad: #a3262f;
+  --bad-bg: #f6dcd8;
+  --shadow: 0 1px 2px rgba(60,35,15,.08), 0 6px 18px rgba(60,35,15,.10);
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #1a1311;
+  --bg2: #221916;
+  --surface: #2a1f1b;
+  --ink: #f0e5cf;
+  --muted: #bba88c;
+  --accent: #d36b7d;
+  --accent-ink: #1a1311;
+  --gold: #d9ae5a;
+  --gold-soft: #4a3a22;
+  --line: #45352d;
+  --ok: #86c994;
+  --ok-bg: #1f3324;
+  --bad: #f08890;
+  --bad-bg: #3d1f22;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  background-image: radial-gradient(ellipse at top, var(--bg2), transparent 70%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+}
+button { font: inherit; color: inherit; }
+.wrap { max-width: 760px; margin: 0 auto; padding: 12px 16px calc(32px + env(safe-area-inset-bottom)); }
+
+/* Header */
+.top { display: flex; align-items: center; gap: 8px; min-height: 52px; }
+.top h1 { font-family: var(--serif); font-size: 1.15rem; margin: 0; flex: 1; font-weight: 600; letter-spacing: .01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.icon-btn { width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; cursor: pointer; font-size: 1.15rem; flex: none; }
+.icon-btn:active { transform: scale(.96); }
+
+.hero { text-align: center; padding: 18px 8px 6px; }
+.hero .orn { color: var(--gold); font-size: 1.2rem; letter-spacing: .6em; }
+.hero h2 { font-family: var(--serif); font-size: clamp(1.7rem, 6vw, 2.3rem); line-height: 1.15; margin: 6px 0 4px; color: var(--accent); font-weight: 700; }
+.hero p { margin: 0; color: var(--muted); font-family: var(--serif); font-style: italic; }
+
+.section-title { font-family: var(--serif); font-size: 1.05rem; color: var(--muted); margin: 22px 2px 10px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+.section-title::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent); }
+
+/* Modes */
+.modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.mode { border: 1.5px solid var(--line); background: var(--surface); border-radius: 16px; padding: 14px 6px; text-align: center; cursor: pointer; box-shadow: var(--shadow); min-height: 92px; }
+.mode .g { display: block; font-size: 1.6rem; color: var(--gold); line-height: 1.2; font-family: var(--serif); }
+.mode .t { display: block; font-weight: 600; margin-top: 4px; font-size: .95rem; }
+.mode[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+.mode[aria-pressed="true"] .g { color: var(--gold-soft); }
+:root[data-theme="dark"] .mode[aria-pressed="true"] .g { color: var(--accent-ink); }
+
+/* Categories */
+.cats { display: grid; gap: 10px; }
+.cat { display: block; width: 100%; text-align: left; border: 1.5px solid var(--line); background: var(--surface); border-radius: 14px; padding: 12px 14px; cursor: pointer; }
+.cat[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent); }
+.cat-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.cat-name { font-weight: 600; }
+.cat-meta { font-size: .82rem; color: var(--muted); white-space: nowrap; }
+.bar { height: 6px; border-radius: 6px; background: var(--bg2); margin-top: 8px; overflow: hidden; border: 1px solid var(--line); }
+.bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--accent)); border-radius: 6px; transition: width .4s; }
+
+.opts { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px; }
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.seg button { border: 0; background: transparent; padding: 10px 16px; cursor: pointer; min-height: 44px; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.toggle { display: inline-flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--surface); cursor: pointer; min-height: 44px; }
+.toggle input { width: 20px; height: 20px; accent-color: var(--accent); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 12px 20px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--surface); cursor: pointer; font-weight: 600; text-align: center; }
+.btn:active { transform: scale(.98); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); box-shadow: var(--shadow); }
+.btn.block { width: 100%; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.small { min-height: 40px; padding: 8px 14px; font-size: .9rem; font-weight: 500; }
+.start { margin-top: 22px; font-size: 1.1rem; }
+.foot { text-align: center; color: var(--muted); font-size: .82rem; margin-top: 26px; }
+.link-btn { background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 8px; font-size: .85rem; }
+
+/* Flashcards */
+.counter { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: .9rem; margin: 6px 2px 10px; gap: 8px; }
+.pill { display: inline-block; padding: 2px 10px; border-radius: 99px; background: var(--gold-soft); color: var(--ink); font-size: .8rem; }
+.stage { position: relative; perspective: 1400px; height: clamp(340px, 58vh, 480px); margin-bottom: 14px; }
+.swipe { position: absolute; inset: 0; touch-action: pan-y; cursor: pointer; user-select: none; -webkit-user-select: none; }
+.swipe.anim { transition: transform .3s ease, opacity .3s ease; }
+.flip { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.3,.7,.3,1); }
+.flip.on { transform: rotateY(180deg); }
+.face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 22px; background: var(--surface); border: 1.5px solid var(--line); box-shadow: var(--shadow); padding: 22px 22px 18px; display: flex; flex-direction: column; overflow: auto; }
+.face::before { content: ""; position: absolute; inset: 7px; border: 1px solid var(--gold-soft); border-radius: 16px; pointer-events: none; }
+.face.back { transform: rotateY(180deg); }
+.face .lbl { font-size: .75rem; text-transform: uppercase; letter-spacing: .12em; color: var(--gold); font-weight: 700; }
+.face .main { flex: 1; display: flex; flex-direction: column; justify-content: center; font-family: var(--serif); }
+.face.front .main { font-size: clamp(1.25rem, 4.8vw, 1.55rem); line-height: 1.35; text-align: center; }
+.face.back .main { font-size: clamp(1.05rem, 4vw, 1.25rem); line-height: 1.45; }
+.face .ctx { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); color: var(--muted); font-size: .92rem; }
+.face .hint { text-align: center; color: var(--muted); font-size: .8rem; }
+.stamp { position: absolute; top: 18px; padding: 4px 12px; border: 3px solid; border-radius: 10px; font-weight: 800; font-size: 1.1rem; opacity: 0; transform: rotate(-12deg); pointer-events: none; z-index: 3; background: var(--surface); }
+.stamp.yes { right: 18px; color: var(--ok); border-color: var(--ok); transform: rotate(12deg); }
+.stamp.no { left: 18px; color: var(--bad); border-color: var(--bad); }
+.fc-actions { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; }
+.btn.no { border-color: var(--bad); color: var(--bad); }
+.btn.yes { border-color: var(--ok); background: var(--ok); color: #fff; }
+:root[data-theme="dark"] .btn.yes { color: #10200f; }
+.kbd-hint { text-align: center; color: var(--muted); font-size: .8rem; margin-top: 10px; }
+@media (hover: none) { .kbd-hint { display: none; } }
+
+/* Quiz */
+.qtype { font-size: .75rem; text-transform: uppercase; letter-spacing: .12em; color: var(--gold); font-weight: 700; }
+.qtext { font-family: var(--serif); font-size: clamp(1.2rem, 4.6vw, 1.45rem); line-height: 1.35; margin: 6px 0 16px; }
+.progress-line { height: 5px; background: var(--bg2); border-radius: 5px; overflow: hidden; margin-bottom: 14px; border: 1px solid var(--line); }
+.progress-line > i { display: block; height: 100%; background: var(--accent); transition: width .3s; }
+.choices { display: grid; gap: 10px; }
+.choice { text-align: left; border: 1.5px solid var(--line); background: var(--surface); border-radius: 14px; padding: 14px 16px; min-height: 54px; cursor: pointer; display: flex; gap: 12px; align-items: center; }
+.choice .k { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; font-weight: 700; font-size: .85rem; color: var(--muted); }
+.choice.correct { border-color: var(--ok); background: var(--ok-bg); }
+.choice.correct .k { background: var(--ok); color: #fff; border-color: var(--ok); }
+.choice.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.choice.wrong .k { background: var(--bad); color: #fff; border-color: var(--bad); }
+.choice:disabled { cursor: default; }
+.tf { grid-template-columns: 1fr 1fr; }
+.tf .choice { justify-content: center; font-weight: 700; font-size: 1.05rem; min-height: 64px; }
+
+.order { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.order li { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(--line); background: var(--surface); border-radius: 14px; padding: 6px 6px 6px 4px; min-height: 56px; }
+.order li.dragging { border-color: var(--accent); box-shadow: 0 8px 24px rgba(0,0,0,.18); transform: scale(1.02); position: relative; z-index: 2; }
+.order .handle { touch-action: none; cursor: grab; width: 40px; align-self: stretch; display: grid; place-items: center; color: var(--muted); font-size: 1.3rem; flex: none; border-radius: 10px; }
+.order .handle:active { cursor: grabbing; }
+.order .num { font-weight: 700; color: var(--gold); width: 20px; flex: none; text-align: center; }
+.order .txt { flex: 1; font-size: .97rem; line-height: 1.3; }
+.order .mv { display: flex; flex-direction: column; gap: 4px; flex: none; }
+.order .mv button { width: 40px; height: 32px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg2); cursor: pointer; font-size: .8rem; }
+.order .mv button:disabled { opacity: .3; }
+.order li.correct { border-color: var(--ok); background: var(--ok-bg); }
+.order li.wrong { border-color: var(--bad); background: var(--bad-bg); }
+
+.match-help { color: var(--muted); font-size: .88rem; margin: -6px 0 12px; }
+.match { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 560px) { .match { grid-template-columns: 1fr; } .match .col + .col { margin-top: 6px; } }
+.match .col { display: grid; gap: 8px; align-content: start; }
+.match .colh { font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 700; }
+.mi { text-align: left; border: 1.5px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 12px; min-height: 48px; cursor: pointer; display: flex; gap: 10px; align-items: center; font-size: .95rem; line-height: 1.3; }
+.mi .b { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1.5px dashed var(--line); display: grid; place-items: center; font-weight: 700; font-size: .8rem; }
+.mi.sel { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+.mi.paired .b { border-style: solid; color: #fff; }
+.mi.left { font-family: var(--serif); }
+.mi.correct { border-color: var(--ok); background: var(--ok-bg); }
+.mi.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.mi .fix { display: block; font-size: .82rem; color: var(--ok); margin-top: 4px; font-family: var(--sans); }
+.c0{background:#7a1f2b!important;border-color:#7a1f2b!important}.c1{background:#a87a26!important;border-color:#a87a26!important}.c2{background:#2f5d7a!important;border-color:#2f5d7a!important}.c3{background:#4f6b2f!important;border-color:#4f6b2f!important}.c4{background:#6b3f7a!important;border-color:#6b3f7a!important}.c5{background:#7a5a2f!important;border-color:#7a5a2f!important}
+
+.feedback { margin-top: 16px; padding: 14px 16px; border-radius: 14px; border: 1.5px solid; animation: pop .25s ease; }
+.feedback.ok { border-color: var(--ok); background: var(--ok-bg); }
+.feedback.bad { border-color: var(--bad); background: var(--bad-bg); }
+.feedback strong { display: block; font-size: 1.05rem; margin-bottom: 2px; }
+.feedback.ok strong { color: var(--ok); }
+.feedback.bad strong { color: var(--bad); }
+.feedback .corr { margin-top: 6px; font-size: .92rem; }
+@keyframes pop { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
+.qactions { margin-top: 16px; }
+
+.result { text-align: center; padding: 10px 0 4px; }
+.score-ring { width: 150px; height: 150px; margin: 8px auto 6px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--bg2) 0); }
+.score-ring > div { width: 118px; height: 118px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-family: var(--serif); font-size: 2rem; font-weight: 700; color: var(--accent); }
+.result h2 { font-family: var(--serif); margin: 8px 0 4px; }
+.result p { color: var(--muted); margin: 0; }
+.mistakes { display: grid; gap: 10px; margin-top: 8px; }
+.mistake { background: var(--surface); border: 1.5px solid var(--line); border-left: 4px solid var(--bad); border-radius: 12px; padding: 12px 14px; }
+.mistake .mq { font-family: var(--serif); font-weight: 600; margin-bottom: 6px; }
+.mistake .ma { font-size: .9rem; }
+.mistake .ma .y { color: var(--bad); }
+.mistake .ma .c { color: var(--ok); }
+.mistake .me { font-size: .85rem; color: var(--muted); margin-top: 6px; }
+.actions-col { display: grid; gap: 10px; margin-top: 20px; }
+
+/* Recap */
+.recap details { background: var(--surface); border: 1.5px solid var(--line); border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+.recap summary { list-style: none; cursor: pointer; padding: 14px 44px 14px 16px; font-family: var(--serif); font-weight: 600; font-size: 1.05rem; position: relative; min-height: 52px; }
+.recap summary::-webkit-details-marker { display: none; }
+.recap summary::after { content: "+"; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 1.4rem; font-family: var(--sans); transition: transform .2s; }
+.recap details[open] summary::after { content: "−"; }
+.recap details[open] summary { border-bottom: 1px dashed var(--line); }
+.recap .sec { color: var(--gold); margin-right: 6px; }
+.recap ul { margin: 0; padding: 12px 16px 14px 34px; }
+.recap li { margin: 6px 0; }
+.recap .ctrl { display: flex; gap: 8px; justify-content: flex-end; margin: -2px 0 10px; }
+.chap { background: var(--surface); border: 1.5px solid var(--line); border-radius: 16px; padding: 16px 18px; margin-bottom: 14px; box-shadow: var(--shadow); }
+.chap h3 { font-family: var(--serif); margin: 0 0 10px; color: var(--accent); font-size: 1.2rem; }
+.motto { font-family: var(--serif); font-style: italic; font-size: 1.12rem; background: var(--gold-soft); border-left: 4px solid var(--gold); padding: 10px 14px; border-radius: 0 10px 10px 0; margin: 0 0 12px; }
+.chap p { margin: 0 0 8px; font-family: var(--serif); font-size: 1.02rem; line-height: 1.55; }
+.chap p:first-of-type::first-letter { font-size: 2.6em; float: left; line-height: .85; padding: 4px 8px 0 0; color: var(--accent); font-weight: 700; }
+.note { border: 1.5px dashed var(--gold); border-radius: 14px; padding: 12px 14px; background: var(--surface); font-size: .95rem; }
+.note b { color: var(--accent); }
+.q { font-family: var(--serif); font-style: italic; }
+.done-box { text-align: center; background: var(--surface); border: 1.5px solid var(--line); border-radius: 20px; padding: 28px 18px; box-shadow: var(--shadow); }
+.done-box .orn { color: var(--gold); font-size: 2rem; }
+.done-box h2 { font-family: var(--serif); color: var(--accent); margin: 6px 0; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .flip, .swipe.anim, .bar > i { transition: none !important; } .feedback { animation: none; } }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* =====================================================================
+   CONȚINUT — editează doar acest obiect.
+   Flashcard: { id, cat, q, a, ctx }
+   Quiz:
+     mcq   { id, cat, type:'mcq',   q, options:[...4], answer:<index>, expl }
+     tf    { id, cat, type:'tf',    q, answer:true|false, expl }
+     order { id, cat, type:'order', q, items:[...în ordinea corectă], expl }
+     match { id, cat, type:'match', q, left:[...], right:[...] (perechea i ↔ i), labels:[stânga, dreapta], expl }
+   ===================================================================== */
+const DATA = {
+  title: "Alexandru Lăpușneanul",
+  subtitle: "Costache Negruzzi · pregătire pentru Bacalaureat",
+  categories: [
+    { id: "rezumat",   name: "Rezumat pe capitole" },
+    { id: "eseu",      name: "Structura eseului" },
+    { id: "citate",    name: "Citate și mottouri" },
+    { id: "personaje", name: "Personaje" }
+  ],
+
+  chapters: [
+    { num: "I", motto: "„Dacă voi nu mă vreți, eu vă vreu!”", text: [
+      "Alexandru Lăpușneanul se întoarce să recupereze tronul Moldovei cu ajutor de la turci. Lângă Tecuci este întâmpinat de boierii Moțoc, Spancioc, Stroici și Veveriță, care îi spun că țara nu îl dorește domn.",
+      "El răspunde că poporul îl vrea și că doar boierii nu îl vor, și că va reocupa tronul indiferent de voința lor. Moțoc îl roagă să îl ierte și să îl ia alături de el. Lăpușneanul nu crede în sinceritatea lui, dar îl păstrează lângă el ca să-l scape de blestemele norodului și îi promite că nu îl va ucide personal."
+    ]},
+    { num: "II", motto: "„Ai să dai samă, Doamnă!”", text: [
+      "Reajuns domnitor, Lăpușneanul se răzbună sadic pe boierii trădători. Ruxanda, soția lui, provine din familia lui Petru Rareș (fiica acestuia). Fusese promisă lui Joldea, dar se căsătorește cu Lăpușneanul, care îi taie nasul pretendentului.",
+      "Soția unui boier ucis de Lăpușneanul o avertizează pe Ruxanda că va da socoteală în fața lui Dumnezeu la Judecata de Apoi pentru că tolerează cruzimile soțului. Ruxanda îl roagă pe Lăpușneanul să înceteze răzbunările. El promite și îi spune că îi va da și „un leac de frică”."
+    ]},
+    { num: "III", motto: "„Capul lui Moțoc vrem!”", text: [
+      "Lăpușneanul merge într-o zi de sărbătoare la biserică (mitropolie), ascultă slujba cu evlavie, se roagă și ține un discurs cu citate biblice în care recunoaște că a fost crud și promite să se schimbe. Îi invită pe boieri la ospăț. Lipsesc doar Spancioc și Stroici.",
+      "Vin 47 de boieri, fiecare servit de un paharnic înarmat. Când Veveriță ridică paharul în cinstea lui Lăpușneanul, acesta îi aruncă buzduganul în frunte, iar măcelul începe.",
+      "Mulțimea de țărani se adună în curtea cetății. Lăpușneanul trimite armașul să afle ce vor, iar ei cer capul lui Moțoc. Lăpușneanul îl dă pe Moțoc mulțimii. Apoi face o piramidă din capetele boierilor și i-o arată Ruxandei („leacul de frică”), care leșină."
+    ]},
+    { num: "IV", motto: "„De mă voi scula, pre mulți am să popesc și eu!”", text: [
+      "Lăpușneanul se retrage la Cetatea Hotin. După 4 ani se îmbolnăvește de lungoare (febră tifoidă). În timpul unei halucinații cere să fie călugărit. Trezindu-se în haine monahale, refuză noul statut și amenință că îl va ucide și pe fiul său, Bogdan.",
+      "Spancioc și Stroici apar și o îndeamnă pe Ruxanda să-l otrăvească. Ea cere sfatul mitropolitului Teofan, care îi spune că Dumnezeu o va ierta. Silită să aleagă între soț și fiu, Ruxanda îl otrăvește pe Lăpușneanul. Acesta va fi înmormântat la mănăstirea Slatina."
+    ]}
+  ],
+
+  essay: [
+    { n: "§1", title: "Contextul — perioada pașoptistă", points: [
+      "Deschidere către cultura și civilizația occidentală. Scriitorii „ard etapele”, așa că în aceeași operă apar trăsături ale clasicismului, romantismului și realismului (dorința de sincronizare cu Occidentul).",
+      "Alte trăsături: evocarea trecutului, admirația față de înaintași, sentimentul patriotic, încrederea în viitor, mesianismul.",
+      "Reprezentanți: Mihail Kogălniceanu, Ion Heliade Rădulescu, Grigore Alexandrescu, Vasile Alecsandri, Costache Negruzzi (prozator romantic).",
+      "Romantismul marchează prima jumătate a secolului al XIX-lea."
+    ]},
+    { n: "§2", title: "Încadrarea", points: [
+      "Publicată în 1840, în revista „Dacia literară”.",
+      "Aderă la romantism prin: teme și surse de inspirație romantice (istoria națională), personaje construite antitetic, cu trăsături excepționale, atmosfera epocii creată prin arhaisme, regionalisme și expresii populare, scene cu efect dramatic."
+    ]},
+    { n: "§3", title: "Raportul realitate–ficțiune", points: [
+      "Sursa: „Letopisețul Țării Moldovei”, scris de Grigore Ureche și continuat de Miron Costin.",
+      "Scene imaginate de autor pentru a construi un personaj excepțional: antiteza dintre cruzimea voievodului și blândețea soției, milostenia de la biserică față de uciderea celor 47 de boieri, episodul otrăvirii.",
+      "Concluzie: adevărul istoric e punctul de plecare, scopul e estetic (crearea unui personaj romantic)."
+    ]},
+    { n: "§4", title: "Tema", points: [
+      "Tema 1: istoria națională în secolul al XVI-lea, lupta pentru putere în Evul Mediu. Antiteza între epoca lui Ștefan cel Mare și Petru Rareș și declinul de după.",
+      "Motive subordonate: dreptatea, raporturile domnitorului cu supușii, atitudinea omului în fața morții.",
+      "Tema 2: destinul unui tiran, de la puterea absolută până la uciderea sa.",
+      "Viziunea: narator omniscient, persoana a III-a; protagonistul e un ANTIMODEL, iar istoria trebuie cunoscută ca să nu fie repetate greșelile trecutului."
+    ]},
+    { n: "§5", title: "Scena 1 — uciderea celor 47 de boieri (capitolul III)", points: [
+      "Anticipată de cuvântarea de la mitropolie: citate biblice despre iertare, milă creștină, dragoste față de aproapele.",
+      "Boierii participă la ospăț, cu excepția lui Spancioc și Stroici.",
+      "Capetele sunt așezate în piramidă; Ruxanda e invitată să privească („leacul de frică”). Cinism și sadism.",
+      "Scena e descrisă realist, prin detalii semnificative."
+    ]},
+    { n: "§6", title: "Scena 2 — moartea lui Lăpușneanul (deznodământul)", points: [
+      "Citat: „Dar de mă voi îndrepta, pre mulți am să popesc și eu!” Îi amenință pe toți, inclusiv pe fiul său, Bogdan.",
+      "Stroici și Spancioc îi propun Ruxandei otrăvirea. Mitropolitul o încurajează (din frică de domnitor), deci gestul e motivat.",
+      "Regretul Ruxandei: „Oh! părinte, ce mă făcuși să fac! zise doamna cătră mitropolitul și se duse cu el plîngînd.”",
+      "Stroici și Spancioc își respectă promisiunea de a-l vedea înainte de moarte. Remarca subiectivă a naratorului: „Nenorocitul domn se zvîrcolea în spasmele agoniei.”",
+      "Lăpușneanul moare trădat chiar de propria soție, pedepsit pentru faptele sale."
+    ]},
+    { n: "§7", title: "Elemente de compoziție și limbaj", points: [
+      "Titlul: pune în relief figura domnitorului, personalitate complexă și controversată, „creată din lumini și umbre”. Un antimodel de conducător, avertisment pentru contemporani într-o perioadă de efervescență revoluționară.",
+      "Stilul: antiteza, dozarea suspansului.",
+      "Cronologie liniară prin înlănțuirea nucleelor narative; tehnica rezumatului (unități temporale vaste); tehnica biografiei. Exemplu: ascensiunea lui Lăpușneanul după moartea lui Petru Rareș și căsătoria cu fiica acestuia pentru legitimitate.",
+      "Modurile de expunere: dialogul e mijloc esențial de caracterizare și de redare a atmosferei epocii.",
+      "Perspectiva narativă obiectivă a naratorului omniscient amplifică veridicitatea."
+    ]}
+  ],
+
+  flashcards: [
+    /* ---------- Rezumat pe capitole ---------- */
+    { id: "r1", cat: "rezumat", q: "Ce motto are capitolul I?", a: "«Dacă voi nu mă vreți, eu vă vreu!»", ctx: "Răspunsul lui Lăpușneanul către boierii care îi spun, lângă Tecuci, că țara nu îl dorește domn." },
+    { id: "r2", cat: "rezumat", q: "Ce motto are capitolul al II-lea?", a: "«Ai să dai samă, Doamnă!»: avertismentul soției unui boier ucis către Ruxanda.", ctx: "Ruxanda va da socoteală în fața lui Dumnezeu, la Judecata de Apoi, pentru că tolerează cruzimile soțului." },
+    { id: "r3", cat: "rezumat", q: "Ce motto are capitolul al III-lea?", a: "«Capul lui Moțoc vrem!»", ctx: "Cererea mulțimii de țărani adunate în curtea cetății; Lăpușneanul trimite armașul să afle ce vor." },
+    { id: "r4", cat: "rezumat", q: "Ce motto are capitolul al IV-lea?", a: "«De mă voi scula, pre mulți am să popesc și eu!»", ctx: "Amenințarea lui Lăpușneanul bolnav, care se trezește în haine monahale și refuză noul statut." },
+    { id: "r5", cat: "rezumat", q: "Cu ajutorul cui se întoarce Lăpușneanul să recupereze tronul Moldovei?", a: "Cu ajutor de la turci.", ctx: "Așa începe capitolul I." },
+    { id: "r6", cat: "rezumat", q: "Unde și de către cine este întâmpinat Lăpușneanul în capitolul I?", a: "Lângă Tecuci, de boierii Moțoc, Spancioc, Stroici și Veveriță.", ctx: "Boierii îi spun că țara nu îl dorește domn." },
+    { id: "r7", cat: "rezumat", q: "Ce le răspunde Lăpușneanul boierilor care îi spun că țara nu îl vrea?", a: "Că poporul îl vrea, doar boierii nu, și că va reocupa tronul indiferent de voința lor.", ctx: "Ideea este rezumată de mottoul capitolului I." },
+    { id: "r8", cat: "rezumat", q: "De ce îl păstrează Lăpușneanul pe Moțoc lângă el?", a: "Ca să-l scape de blestemele norodului. Nu crede în sinceritatea lui, dar îi promite că nu îl va ucide personal.", ctx: "Moțoc îl rugase să îl ierte și să îl ia alături de el." },
+    { id: "r9", cat: "rezumat", q: "Ce se întâmplă cu Joldea în capitolul al II-lea?", a: "Lăpușneanul îi taie nasul.", ctx: "Ruxanda îi fusese promisă lui Joldea, dar se căsătorește cu Lăpușneanul." },
+    { id: "r10", cat: "rezumat", q: "Ce îi promite Lăpușneanul Ruxandei la finalul capitolului al II-lea?", a: "Că va înceta răzbunările și că îi va da și «un leac de frică».", ctx: "Ruxanda îl rugase să înceteze, după avertismentul soției boierului ucis." },
+    { id: "r11", cat: "rezumat", q: "Ce face Lăpușneanul la mitropolie, în ziua de sărbătoare?", a: "Ascultă slujba cu evlavie, se roagă și ține un discurs cu citate biblice: recunoaște că a fost crud și promite să se schimbe. Apoi îi invită pe boieri la ospăț.", ctx: "Lipsesc de la ospăț doar Spancioc și Stroici." },
+    { id: "r12", cat: "rezumat", q: "Ce gest declanșează măcelul de la ospăț?", a: "Când Veveriță ridică paharul în cinstea lui, Lăpușneanul îi aruncă buzduganul în frunte.", ctx: "Fiecare dintre cei 47 de boieri era servit de un paharnic înarmat." },
+    { id: "r13", cat: "rezumat", q: "Ce este «leacul de frică»?", a: "Piramida făcută din capetele boierilor uciși, pe care Lăpușneanul i-o arată Ruxandei.", ctx: "Ruxanda leșină. Promisiunea fusese făcută în capitolul al II-lea." },
+    { id: "r14", cat: "rezumat", q: "Unde se retrage Lăpușneanul și de ce boală suferă?", a: "La Cetatea Hotin; după 4 ani se îmbolnăvește de lungoare (febră tifoidă).", ctx: "Începutul capitolului al IV-lea." },
+    { id: "r15", cat: "rezumat", q: "Ce se întâmplă după ce Lăpușneanul cere, într-o halucinație, să fie călugărit?", a: "Se trezește în haine monahale, refuză noul statut și amenință că îl va ucide și pe fiul său, Bogdan.", ctx: "De aici mottoul capitolului al IV-lea." },
+    { id: "r16", cat: "rezumat", q: "Cum se încheie capitolul al IV-lea?", a: "Spancioc și Stroici o îndeamnă pe Ruxanda să-l otrăvească; mitropolitul Teofan îi spune că Dumnezeu o va ierta. Silită să aleagă între soț și fiu, Ruxanda îl otrăvește.", ctx: "Lăpușneanul va fi înmormântat la mănăstirea Slatina." },
+
+    /* ---------- Structura eseului ---------- */
+    { id: "e1", cat: "eseu", q: "Care sunt paragrafele eseului „Particularitățile nuvelei istorice”?", a: "§1 Contextul · §2 Încadrarea · §3 Raportul realitate–ficțiune · §4 Tema · §5 Scena 1 · §6 Scena 2 · §7 Elemente de compoziție și limbaj.", ctx: "Scheletul pe care îl reconstitui la examen." },
+    { id: "e2", cat: "eseu", q: "§1 · Ce înseamnă că scriitorii pașoptiști „ard etapele”?", a: "Că în aceeași operă apar trăsături ale clasicismului, romantismului și realismului.", ctx: "Cauza: deschiderea către cultura și civilizația occidentală, dorința de sincronizare cu Occidentul." },
+    { id: "e3", cat: "eseu", q: "§1 · Ce alte trăsături are perioada pașoptistă?", a: "Evocarea trecutului, admirația față de înaintași, sentimentul patriotic, încrederea în viitor, mesianismul.", ctx: "Contextul perioadei pașoptiste." },
+    { id: "e4", cat: "eseu", q: "§1 · Numește reprezentanții perioadei pașoptiste.", a: "Mihail Kogălniceanu, Ion Heliade Rădulescu, Grigore Alexandrescu, Vasile Alecsandri, Costache Negruzzi (prozator romantic).", ctx: "Romantismul marchează prima jumătate a secolului al XIX-lea." },
+    { id: "e5", cat: "eseu", q: "§2 · Când și unde a fost publicată nuvela?", a: "În 1840, în revista „Dacia literară”.", ctx: "Încadrarea operei." },
+    { id: "e6", cat: "eseu", q: "§2 · Prin ce aderă nuvela la romantism?", a: "Teme și surse romantice (istoria națională); personaje antitetice, cu trăsături excepționale; atmosfera epocii prin arhaisme, regionalisme și expresii populare; scene cu efect dramatic.", ctx: "Patru argumente pentru încadrarea în romantism." },
+    { id: "e7", cat: "eseu", q: "§3 · Care este sursa istorică a nuvelei?", a: "„Letopisețul Țării Moldovei”, scris de Grigore Ureche și continuat de Miron Costin.", ctx: "Raportul realitate–ficțiune." },
+    { id: "e8", cat: "eseu", q: "§3 · Ce scene sunt imaginate de autor?", a: "Antiteza dintre cruzimea voievodului și blândețea soției; milostenia de la biserică față de uciderea celor 47 de boieri; episodul otrăvirii.", ctx: "Scopul lor: construirea unui personaj excepțional." },
+    { id: "e9", cat: "eseu", q: "§3 · Care este concluzia raportului realitate–ficțiune?", a: "Adevărul istoric este punctul de plecare, dar scopul este estetic: crearea unui personaj romantic.", ctx: "Fraza de încheiere a paragrafului §3." },
+    { id: "e10", cat: "eseu", q: "§4 · Care este prima temă a nuvelei?", a: "Istoria națională în secolul al XVI-lea: lupta pentru putere în Evul Mediu.", ctx: "Antiteză între epoca lui Ștefan cel Mare și Petru Rareș și declinul de după." },
+    { id: "e11", cat: "eseu", q: "§4 · Care sunt motivele subordonate temei?", a: "Dreptatea, raporturile domnitorului cu supușii, atitudinea omului în fața morții.", ctx: "Se subordonează temei istoriei naționale." },
+    { id: "e12", cat: "eseu", q: "§4 · Care este a doua temă și care este viziunea operei?", a: "Destinul unui tiran, de la puterea absolută până la uciderea sa. Protagonistul e un ANTIMODEL: istoria trebuie cunoscută ca să nu fie repetate greșelile trecutului.", ctx: "Narator omniscient, persoana a III-a." },
+    { id: "e13", cat: "eseu", q: "§5 · Ce anticipează scena uciderii celor 47 de boieri?", a: "Cuvântarea de la mitropolie, cu citate biblice despre iertare, milă creștină și dragoste față de aproapele.", ctx: "Piramida de capete arată cinismul și sadismul; scena e descrisă realist, prin detalii semnificative." },
+    { id: "e14", cat: "eseu", q: "§6 · De ce este motivat gestul Ruxandei în scena morții?", a: "Lăpușneanul îi amenință pe toți, inclusiv pe fiul său, Bogdan, iar mitropolitul o încurajează (din frică de domnitor).", ctx: "Lăpușneanul moare trădat chiar de propria soție, pedepsit pentru faptele sale." },
+    { id: "e15", cat: "eseu", q: "§7 · Ce semnificație are titlul?", a: "Pune în relief figura domnitorului, personalitate complexă și controversată, „creată din lumini și umbre”: un antimodel de conducător.", ctx: "Avertisment pentru contemporani într-o perioadă de efervescență revoluționară." },
+    { id: "e16", cat: "eseu", q: "§7 · Ce tehnici narative susțin compoziția?", a: "Cronologie liniară prin înlănțuirea nucleelor narative; tehnica rezumatului (unități temporale vaste); tehnica biografiei.", ctx: "Exemplu: ascensiunea lui Lăpușneanul după moartea lui Petru Rareș și căsătoria cu fiica acestuia pentru legitimitate." },
+    { id: "e17", cat: "eseu", q: "§7 · Ce rol au dialogul și perspectiva narativă?", a: "Dialogul e mijloc esențial de caracterizare și de redare a atmosferei epocii; perspectiva obiectivă a naratorului omniscient amplifică veridicitatea.", ctx: "Stilul: antiteza și dozarea suspansului." },
+
+    /* ---------- Citate și mottouri ---------- */
+    { id: "c1", cat: "citate", q: "Care e diferența dintre mottoul capitolului al IV-lea și replica din text citată în eseu?", a: "Mottoul: «De mă voi scula, pre mulți am să popesc și eu!»\nReplica din text: «Dar de mă voi îndrepta, pre mulți am să popesc și eu!»", ctx: "„scula” în motto, „îndrepta” în replica citată la §6. Folosește forma potrivită contextului!" },
+    { id: "c2", cat: "citate", q: "Cine rostește «Dacă voi nu mă vreți, eu vă vreu!» și cui?", a: "Alexandru Lăpușneanul, boierilor care îl întâmpină lângă Tecuci.", ctx: "Mottoul capitolului I." },
+    { id: "c3", cat: "citate", q: "Cine rostește «Ai să dai samă, Doamnă!»?", a: "Soția unui boier ucis de Lăpușneanul, adresându-se Ruxandei.", ctx: "Mottoul capitolului al II-lea: o avertizează că va da socoteală la Judecata de Apoi." },
+    { id: "c4", cat: "citate", q: "Cine strigă «Capul lui Moțoc vrem!»?", a: "Mulțimea de țărani adunată în curtea cetății.", ctx: "Mottoul capitolului al III-lea; Lăpușneanul îl dă pe Moțoc mulțimii." },
+    { id: "c5", cat: "citate", q: "Completează replica din scena morții: «Dar de mă voi îndrepta, …»", a: "«… pre mulți am să popesc și eu!»", ctx: "Lăpușneanul îi amenință pe toți, inclusiv pe fiul său, Bogdan (§6)." },
+    { id: "c6", cat: "citate", q: "Cine spune «Oh! părinte, ce mă făcuși să fac!» și cui?", a: "Ruxanda, mitropolitului: «Oh! părinte, ce mă făcuși să fac! zise doamna cătră mitropolitul și se duse cu el plîngînd.»", ctx: "Exprimă regretul Ruxandei după otrăvire (§6)." },
+    { id: "c7", cat: "citate", q: "Ce reprezintă enunțul «Nenorocitul domn se zvîrcolea în spasmele agoniei.»?", a: "Remarca subiectivă a naratorului, în scena morții lui Lăpușneanul.", ctx: "Contrastează cu perspectiva narativă obiectivă a naratorului omniscient." },
+    { id: "c8", cat: "citate", q: "Cine promite «un leac de frică» și cum se împlinește promisiunea?", a: "Lăpușneanul, Ruxandei (cap. II); îi arată piramida din capetele boierilor (cap. III).", ctx: "Ruxanda leșină. Eseul subliniază cinismul și sadismul scenei." },
+    { id: "c9", cat: "citate", q: "Ce sintagmă caracterizează figura domnitorului în comentariul titlului?", a: "Personalitate complexă și controversată, «creată din lumini și umbre».", ctx: "§7 · Elemente de compoziție și limbaj." },
+    { id: "c10", cat: "citate", q: "Recită cele patru mottouri, în ordinea capitolelor.", a: "I «Dacă voi nu mă vreți, eu vă vreu!»\nII «Ai să dai samă, Doamnă!»\nIII «Capul lui Moțoc vrem!»\nIV «De mă voi scula, pre mulți am să popesc și eu!»", ctx: "Atenție la formele arhaice: „samă”, „pre”." },
+    { id: "c11", cat: "citate", q: "Care mottou trimite la Judecata de Apoi?", a: "«Ai să dai samă, Doamnă!»", ctx: "Ruxanda va da socoteală în fața lui Dumnezeu pentru că tolerează cruzimile soțului." },
+
+    /* ---------- Personaje ---------- */
+    { id: "p1", cat: "personaje", q: "Cum este caracterizat Alexandru Lăpușneanul în eseu?", a: "Personaj romantic excepțional, tiran și ANTIMODEL de conducător; personalitate complexă și controversată, „creată din lumini și umbre”.", ctx: "Moare trădat chiar de propria soție, pedepsit pentru faptele sale." },
+    { id: "p2", cat: "personaje", q: "Cine este Ruxanda?", a: "Soția lui Lăpușneanul, fiica lui Petru Rareș.", ctx: "Blândețea ei este în antiteză cu cruzimea voievodului." },
+    { id: "p3", cat: "personaje", q: "De ce se căsătorește Lăpușneanul cu fiica lui Petru Rareș, conform eseului?", a: "Pentru legitimitate, în ascensiunea sa de după moartea lui Petru Rareș.", ctx: "Exemplu pentru tehnica biografiei (§7)." },
+    { id: "p4", cat: "personaje", q: "Ce rol are Moțoc?", a: "Boier care îl întâmpină pe Lăpușneanul lângă Tecuci, îi cere iertare și e păstrat lângă el; în capitolul al III-lea e dat mulțimii care îi cere capul.", ctx: "Lăpușneanul îi promisese că nu îl va ucide personal." },
+    { id: "p5", cat: "personaje", q: "Ce rol au Spancioc și Stroici?", a: "Sunt singurii boieri care lipsesc de la ospăț; în final o îndeamnă pe Ruxanda să-l otrăvească pe Lăpușneanul și își respectă promisiunea de a-l vedea înainte de moarte.", ctx: "Apar și în capitolul I, printre boierii de lângă Tecuci." },
+    { id: "p6", cat: "personaje", q: "Ce se întâmplă cu Veveriță?", a: "La ospăț ridică paharul în cinstea lui Lăpușneanul, iar acesta îi aruncă buzduganul în frunte: începe măcelul.", ctx: "Fusese și el printre boierii de lângă Tecuci." },
+    { id: "p7", cat: "personaje", q: "Cine este Joldea?", a: "Pretendentul căruia îi fusese promisă Ruxanda; Lăpușneanul îi taie nasul.", ctx: "Capitolul al II-lea." },
+    { id: "p8", cat: "personaje", q: "Cine este Bogdan?", a: "Fiul lui Lăpușneanul, pe care acesta amenință că îl va ucide.", ctx: "Ruxanda este silită să aleagă între soț și fiu." },
+    { id: "p9", cat: "personaje", q: "Ce rol are mitropolitul Teofan?", a: "O sfătuiește pe Ruxanda, spunându-i că Dumnezeu o va ierta; o încurajează din frică de domnitor.", ctx: "Astfel, gestul otrăvirii este motivat (§6)." },
+    { id: "p10", cat: "personaje", q: "Ce rol are armașul în capitolul al III-lea?", a: "Lăpușneanul îl trimite să afle ce vrea mulțimea de țărani adunată în curtea cetății.", ctx: "Mulțimea cere capul lui Moțoc." },
+    { id: "p11", cat: "personaje", q: "Ce rol are soția boierului ucis?", a: "O avertizează pe Ruxanda că va da socoteală în fața lui Dumnezeu: «Ai să dai samă, Doamnă!»", ctx: "Avertismentul o face pe Ruxanda să-i ceară soțului să înceteze răzbunările." },
+    { id: "p12", cat: "personaje", q: "Cum sunt construite personajele, ca particularitate romantică?", a: "Antitetic, cu trăsături excepționale (de exemplu, cruzimea voievodului față de blândețea soției).", ctx: "§2 și §3 ale eseului." },
+    { id: "p13", cat: "personaje", q: "Ce fel de narator are nuvela?", a: "Narator omniscient, la persoana a III-a; perspectiva lui obiectivă amplifică veridicitatea.", ctx: "Excepție: remarca subiectivă «Nenorocitul domn se zvîrcolea în spasmele agoniei.»" }
+  ],
+
+  quiz: [
+    /* ---------- Rezumat pe capitole ---------- */
+    { id: "qr1", cat: "rezumat", type: "mcq", q: "Câți boieri sunt uciși la ospăț?", options: ["37", "47", "57", "74"], answer: 1, expl: "La ospăț vin 47 de boieri, fiecare servit de un paharnic înarmat." },
+    { id: "qr2", cat: "rezumat", type: "tf", q: "Spancioc și Stroici participă la ospăț.", answer: false, expl: "Fals: Spancioc și Stroici sunt singurii care lipsesc de la ospăț." },
+    { id: "qr3", cat: "rezumat", type: "order", q: "Ordonează evenimentele în ordine cronologică.", items: ["Întâlnirea de lângă Tecuci", "Discursul de la mitropolie", "Gestul cu buzduganul asupra lui Veveriță", "Mulțimea cere capul lui Moțoc", "Retragerea la Hotin", "Otrăvirea"], expl: "Cap. I: Tecuci → cap. III: mitropolie, ospăț, mulțimea → cap. IV: Hotin, otrăvirea." },
+    { id: "qr4", cat: "rezumat", type: "mcq", q: "Lângă ce localitate este întâmpinat Lăpușneanul de boieri?", options: ["Hotin", "Tecuci", "Slatina", "Iași"], answer: 1, expl: "Lângă Tecuci îl întâmpină Moțoc, Spancioc, Stroici și Veveriță." },
+    { id: "qr5", cat: "rezumat", type: "tf", q: "Lăpușneanul se întoarce să recupereze tronul Moldovei cu ajutor de la turci.", answer: true, expl: "Adevărat: așa începe capitolul I." },
+    { id: "qr6", cat: "rezumat", type: "mcq", q: "De ce boală suferă Lăpușneanul la Hotin?", options: ["Ciumă", "O rană din luptă", "Lungoare (febră tifoidă)", "Nebunie"], answer: 2, expl: "După 4 ani la Hotin, se îmbolnăvește de lungoare (febră tifoidă)." },
+    { id: "qr7", cat: "rezumat", type: "order", q: "Ordonează evenimentele din capitolele I–II.", items: ["Boierii îi spun lui Lăpușneanul că țara nu îl vrea domn", "Moțoc îl roagă să îl ierte și să îl ia alături de el", "Lăpușneanul, reajuns domnitor, se răzbună pe boieri", "Soția unui boier ucis o avertizează pe Ruxanda", "Ruxanda îl roagă pe Lăpușneanul să înceteze răzbunările"], expl: "Întâlnirea de la Tecuci și cererea lui Moțoc (cap. I), apoi răzbunările, avertismentul și rugămintea Ruxandei (cap. II)." },
+    { id: "qr8", cat: "rezumat", type: "order", q: "Ordonează evenimentele din capitolul al III-lea.", items: ["Lăpușneanul ascultă slujba la mitropolie", "Îi invită pe boieri la ospăț", "Îi aruncă buzduganul în frunte lui Veveriță", "Trimite armașul să afle ce vrea mulțimea", "Îl dă pe Moțoc mulțimii", "Îi arată Ruxandei piramida de capete"], expl: "Slujba și discursul → ospățul → buzduganul și măcelul → mulțimea cere capul lui Moțoc → piramida („leacul de frică”)." },
+    { id: "qr9", cat: "rezumat", type: "order", q: "Ordonează evenimentele din capitolul al IV-lea.", items: ["Retragerea la Cetatea Hotin", "Îmbolnăvirea de lungoare", "Cererea de a fi călugărit, în halucinație", "Amenințarea că îl va ucide și pe Bogdan", "Ruxanda cere sfatul mitropolitului Teofan", "Ruxanda îl otrăvește pe Lăpușneanul"], expl: "Hotin → boala → călugărirea → amenințarea → sfatul lui Teofan → otrăvirea." },
+    { id: "qr10", cat: "rezumat", type: "mcq", q: "Unde este înmormântat Lăpușneanul?", options: ["La Cetatea Hotin", "La mitropolie", "La mănăstirea Slatina", "Lângă Tecuci"], answer: 2, expl: "Finalul capitolului al IV-lea: va fi înmormântat la mănăstirea Slatina." },
+    { id: "qr11", cat: "rezumat", type: "mcq", q: "Pe cine trimite Lăpușneanul să afle ce vrea mulțimea de țărani?", options: ["Pe Moțoc", "Pe armaș", "Pe mitropolit", "Pe Veveriță"], answer: 1, expl: "Lăpușneanul trimite armașul, iar mulțimea cere capul lui Moțoc." },
+    { id: "qr12", cat: "rezumat", type: "tf", q: "Lăpușneanul îl ucide personal pe Moțoc.", answer: false, expl: "Fals: îl dă pe Moțoc mulțimii. În cap. I îi promisese că nu îl va ucide personal." },
+    { id: "qr13", cat: "rezumat", type: "tf", q: "Ruxanda leșină când vede piramida din capetele boierilor.", answer: true, expl: "Adevărat: piramida este „leacul de frică” promis în capitolul al II-lea." },
+
+    /* ---------- Structura eseului ---------- */
+    { id: "qe1", cat: "eseu", type: "mcq", q: "În ce an a fost publicată nuvela?", options: ["1830", "1840", "1848", "1859"], answer: 1, expl: "Nuvela a fost publicată în 1840, în revista „Dacia literară”." },
+    { id: "qe2", cat: "eseu", type: "mcq", q: "În ce revistă a fost publicată nuvela?", options: ["„Dacia literară”", "„Convorbiri literare”", "„Albina românească”", "„Curierul românesc”"], answer: 0, expl: "§2 Încadrarea: publicată în 1840, în „Dacia literară”." },
+    { id: "qe3", cat: "eseu", type: "tf", q: "Sursa nuvelei este „Letopisețul Țării Moldovei”, scris de Grigore Ureche și continuat de Miron Costin.", answer: true, expl: "Adevărat: aceasta este sursa indicată la §3, raportul realitate–ficțiune." },
+    { id: "qe4", cat: "eseu", type: "tf", q: "Episodul otrăvirii este preluat întocmai din cronică.", answer: false, expl: "Fals: episodul otrăvirii este una dintre scenele imaginate de autor pentru a construi un personaj excepțional." },
+    { id: "qe5", cat: "eseu", type: "match", q: "Asociază fiecare idee cu paragraful eseului în care apare.", labels: ["Idee", "Paragraf"], left: ["Scriitorii „ard etapele”", "Publicată în 1840, în „Dacia literară”", "Adevărul istoric e punct de plecare, scopul e estetic", "Destinul unui tiran, de la puterea absolută la uciderea sa"], right: ["§1 Contextul", "§2 Încadrarea", "§3 Realitate–ficțiune", "§4 Tema"], expl: "Primele patru paragrafe: context, încadrare, realitate–ficțiune, temă." },
+    { id: "qe6", cat: "eseu", type: "match", q: "Asociază fiecare concept cu paragraful eseului.", labels: ["Concept", "Paragraf"], left: ["Piramida de capete: cinism și sadism", "„Oh! părinte, ce mă făcuși să fac!”", "Tehnica biografiei", "Motivele subordonate: dreptatea, raporturile cu supușii"], right: ["§5 Scena 1", "§6 Scena 2", "§7 Compoziție și limbaj", "§4 Tema"], expl: "Scena 1 = uciderea boierilor; Scena 2 = moartea lui Lăpușneanul; §7 = tehnici narative; §4 = tema și motivele." },
+    { id: "qe7", cat: "eseu", type: "mcq", q: "Ce tip de narator are nuvela?", options: ["Narator-personaj, persoana I", "Narator omniscient, persoana a III-a", "Narator martor, persoana I", "Narator-personaj, persoana a II-a"], answer: 1, expl: "§4 Viziunea: narator omniscient, persoana a III-a; perspectiva obiectivă amplifică veridicitatea." },
+    { id: "qe8", cat: "eseu", type: "mcq", q: "Cum este protagonistul în viziunea operei?", options: ["Un model de conducător", "Un erou romantic pozitiv", "Un ANTIMODEL", "Un personaj secundar"], answer: 2, expl: "Protagonistul e un antimodel: istoria trebuie cunoscută ca să nu fie repetate greșelile trecutului." },
+    { id: "qe9", cat: "eseu", type: "tf", q: "Scopul nuvelei este strict documentar, de reconstituire exactă a istoriei.", answer: false, expl: "Fals: adevărul istoric e punctul de plecare, dar scopul e estetic (crearea unui personaj romantic)." },
+    { id: "qe10", cat: "eseu", type: "order", q: "Ordonează primele șase paragrafe ale eseului.", items: ["Contextul — perioada pașoptistă", "Încadrarea", "Raportul realitate–ficțiune", "Tema", "Scena 1 — uciderea celor 47 de boieri", "Scena 2 — moartea lui Lăpușneanul"], expl: "§1 Context → §2 Încadrare → §3 Realitate–ficțiune → §4 Tema → §5 Scena 1 → §6 Scena 2 (apoi §7 Compoziție și limbaj)." },
+    { id: "qe11", cat: "eseu", type: "mcq", q: "Ce perioadă istorică evocă prima temă a nuvelei?", options: ["Secolul al XIV-lea", "Secolul al XV-lea", "Secolul al XVI-lea", "Secolul al XVIII-lea"], answer: 2, expl: "Tema 1: istoria națională în secolul al XVI-lea, lupta pentru putere în Evul Mediu." },
+    { id: "qe12", cat: "eseu", type: "mcq", q: "Care dintre următoarele NU este o trăsătură a perioadei pașoptiste, conform schemei?", options: ["Mesianismul", "Încrederea în viitor", "Respingerea culturii occidentale", "Evocarea trecutului"], answer: 2, expl: "Perioada pașoptistă înseamnă tocmai deschidere către cultura și civilizația occidentală." },
+    { id: "qe13", cat: "eseu", type: "tf", q: "Romantismul marchează prima jumătate a secolului al XIX-lea.", answer: true, expl: "Adevărat (§1 Contextul)." },
+    { id: "qe14", cat: "eseu", type: "mcq", q: "Care dintre următoarele este un motiv subordonat temei?", options: ["Dreptatea", "Călătoria inițiatică", "Natura ocrotitoare", "Visul cosmic"], answer: 0, expl: "Motivele subordonate: dreptatea, raporturile domnitorului cu supușii, atitudinea omului în fața morții." },
+    { id: "qe15", cat: "eseu", type: "mcq", q: "Ce trăsături de stil sunt menționate în §7?", options: ["Ironia și umorul", "Antiteza și dozarea suspansului", "Lirismul și meditația", "Satira și caricatura"], answer: 1, expl: "Stilul: antiteza, dozarea suspansului." },
+
+    /* ---------- Citate și mottouri ---------- */
+    { id: "qc1", cat: "citate", type: "match", q: "Asociază fiecare mottou cu capitolul corect.", labels: ["Mottou", "Capitol"], left: ["„Dacă voi nu mă vreți, eu vă vreu!”", "„Ai să dai samă, Doamnă!”", "„Capul lui Moțoc vrem!”", "„De mă voi scula, pre mulți am să popesc și eu!”"], right: ["Capitolul I", "Capitolul al II-lea", "Capitolul al III-lea", "Capitolul al IV-lea"], expl: "Ordinea mottourilor urmează povestea: întoarcerea, avertismentul, revolta mulțimii, boala." },
+    { id: "qc2", cat: "citate", type: "match", q: "Asociază fiecare citat cu cel care îl rostește.", labels: ["Citat", "Cine îl rostește"], left: ["„Dacă voi nu mă vreți, eu vă vreu!”", "„Ai să dai samă, Doamnă!”", "„Capul lui Moțoc vrem!”", "„Oh! părinte, ce mă făcuși să fac!”", "„Nenorocitul domn se zvîrcolea în spasmele agoniei.”"], right: ["Alexandru Lăpușneanul", "Soția unui boier ucis", "Mulțimea de țărani", "Ruxanda", "Naratorul"], expl: "Ultimul enunț este remarca subiectivă a naratorului." },
+    { id: "qc3", cat: "citate", type: "mcq", q: "Completează mottoul capitolului al IV-lea: „De mă voi ___, pre mulți am să popesc și eu!”", options: ["îndrepta", "scula", "vindeca", "ridica"], answer: 1, expl: "Mottoul folosește „scula”; replica din text, citată în eseu, folosește „îndrepta”." },
+    { id: "qc4", cat: "citate", type: "mcq", q: "Completează replica din scena morții, citată în eseu: „Dar de mă voi ___, pre mulți am să popesc și eu!”", options: ["scula", "îndrepta", "vindeca", "întoarce"], answer: 1, expl: "În replica din text apare „îndrepta”; în mottoul capitolului al IV-lea apare „scula”." },
+    { id: "qc5", cat: "citate", type: "tf", q: "„Ai să dai samă, Doamnă!” este rostit de Ruxanda.", answer: false, expl: "Fals: o rostește soția unui boier ucis, adresându-se Ruxandei." },
+    { id: "qc6", cat: "citate", type: "tf", q: "„Nenorocitul domn se zvîrcolea în spasmele agoniei.” este o remarcă subiectivă a naratorului.", answer: true, expl: "Adevărat: eseul o citează ca remarcă subiectivă a naratorului, în scena morții." },
+    { id: "qc7", cat: "citate", type: "mcq", q: "Cui îi spune Ruxanda „Oh! părinte, ce mă făcuși să fac!”?", options: ["Lui Lăpușneanul", "Mitropolitului", "Lui Spancioc", "Lui Bogdan"], answer: 1, expl: "„… zise doamna cătră mitropolitul și se duse cu el plîngînd.” — regretul Ruxandei." },
+    { id: "qc8", cat: "citate", type: "mcq", q: "Ce este „leacul de frică” promis Ruxandei?", options: ["O băutură otrăvită", "Piramida din capetele boierilor", "Călugărirea domnitorului", "Retragerea la Hotin"], answer: 1, expl: "În capitolul al III-lea, Lăpușneanul îi arată Ruxandei piramida de capete, iar ea leșină." },
+    { id: "qc9", cat: "citate", type: "mcq", q: "Cum este descrisă figura domnitorului în comentariul titlului?", options: ["„creată din lumini și umbre”", "„un erou fără pată”", "„o victimă a destinului”", "„un sfânt al Moldovei”"], answer: 0, expl: "§7: personalitate complexă și controversată, „creată din lumini și umbre”." },
+    { id: "qc10", cat: "citate", type: "tf", q: "„Capul lui Moțoc vrem!” este mottoul capitolului al II-lea.", answer: false, expl: "Fals: este mottoul capitolului al III-lea. Mottoul capitolului al II-lea este „Ai să dai samă, Doamnă!”." },
+    { id: "qc11", cat: "citate", type: "mcq", q: "Care mottou anunță că Ruxanda va da socoteală la Judecata de Apoi?", options: ["„Dacă voi nu mă vreți, eu vă vreu!”", "„Ai să dai samă, Doamnă!”", "„Capul lui Moțoc vrem!”", "„De mă voi scula, pre mulți am să popesc și eu!”"], answer: 1, expl: "Soția unui boier ucis o avertizează pe Ruxanda că tolerează cruzimile soțului." },
+
+    /* ---------- Personaje ---------- */
+    { id: "qp1", cat: "personaje", type: "mcq", q: "Al cui fiică este Ruxanda?", options: ["A lui Ștefan cel Mare", "A lui Petru Rareș", "A lui Moțoc", "A mitropolitului Teofan"], answer: 1, expl: "Ruxanda provine din familia lui Petru Rareș, fiind fiica acestuia." },
+    { id: "qp2", cat: "personaje", type: "mcq", q: "În fruntea cărui boier aruncă Lăpușneanul buzduganul?", options: ["Moțoc", "Spancioc", "Veveriță", "Stroici"], answer: 2, expl: "Când Veveriță ridică paharul în cinstea lui, Lăpușneanul îi aruncă buzduganul în frunte." },
+    { id: "qp3", cat: "personaje", type: "mcq", q: "Cui îi fusese promisă Ruxanda înainte de căsătoria cu Lăpușneanul?", options: ["Lui Joldea", "Lui Moțoc", "Lui Stroici", "Lui Veveriță"], answer: 0, expl: "Ruxanda fusese promisă lui Joldea; Lăpușneanul îi taie nasul pretendentului." },
+    { id: "qp4", cat: "personaje", type: "mcq", q: "Cum se numește fiul lui Lăpușneanul?", options: ["Petru", "Bogdan", "Ștefan", "Teofan"], answer: 1, expl: "Lăpușneanul amenință că îl va ucide și pe fiul său, Bogdan." },
+    { id: "qp5", cat: "personaje", type: "mcq", q: "Cum se numește mitropolitul care o sfătuiește pe Ruxanda?", options: ["Teofan", "Bogdan", "Joldea", "Veveriță"], answer: 0, expl: "Mitropolitul Teofan îi spune Ruxandei că Dumnezeu o va ierta." },
+    { id: "qp6", cat: "personaje", type: "tf", q: "Mitropolitul o încurajează pe Ruxanda din frică de domnitor.", answer: true, expl: "Adevărat: de aceea, conform eseului, gestul Ruxandei este motivat." },
+    { id: "qp7", cat: "personaje", type: "tf", q: "Lăpușneanul crede în sinceritatea lui Moțoc.", answer: false, expl: "Fals: nu crede în sinceritatea lui, dar îl păstrează lângă el ca să-l scape de blestemele norodului." },
+    { id: "qp8", cat: "personaje", type: "match", q: "Asociază fiecare personaj cu fapta lui.", labels: ["Personaj", "Faptă"], left: ["Veveriță", "Joldea", "Teofan", "Moțoc", "Bogdan"], right: ["Ridică paharul în cinstea domnitorului", "I se taie nasul", "Îi spune Ruxandei că Dumnezeu o va ierta", "Este dat mulțimii", "Este amenințat cu moartea de propriul tată"], expl: "Fiecare personaj secundar este legat de un episod-cheie al nuvelei." },
+    { id: "qp9", cat: "personaje", type: "tf", q: "Lăpușneanul și Ruxanda sunt construiți antitetic: cruzimea voievodului față de blândețea soției.", answer: true, expl: "Adevărat: antiteza este o scenă imaginată de autor și o trăsătură romantică." },
+    { id: "qp10", cat: "personaje", type: "mcq", q: "Cine își respectă promisiunea de a-l vedea pe Lăpușneanul înainte de moarte?", options: ["Moțoc și Veveriță", "Spancioc și Stroici", "Joldea și Bogdan", "Mitropolitul și armașul"], answer: 1, expl: "Stroici și Spancioc își respectă promisiunea (§6)." },
+    { id: "qp11", cat: "personaje", type: "mcq", q: "De ce se căsătorește Lăpușneanul cu fiica lui Petru Rareș, conform eseului?", options: ["Din dragoste", "Pentru legitimitate", "La cererea turcilor", "Pentru a-l umili pe Moțoc"], answer: 1, expl: "Tehnica biografiei (§7): ascensiunea lui după moartea lui Petru Rareș și căsătoria cu fiica acestuia pentru legitimitate." },
+    { id: "qp12", cat: "personaje", type: "tf", q: "Spancioc și Stroici o îndeamnă pe Ruxanda să-l otrăvească pe Lăpușneanul.", answer: true, expl: "Adevărat: apar în capitolul al IV-lea și îi propun otrăvirea." }
+  ]
+};
+</script>
+
+<script>
+/* =====================================================================
+   LOGICĂ
+   ===================================================================== */
+(function () {
+  "use strict";
+
+  // ---------- Stocare sigură ----------
+  const KEY = "lapusneanul_v1";
+  const store = {
+    load() { try { const s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } },
+    save(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) { /* fără stocare */ } }
+  };
+  const saved = store.load() || {};
+  const P = {
+    cards: saved.cards && typeof saved.cards === "object" ? saved.cards : {}, // id -> { s:'known'|'unknown', miss:n }
+    best: saved.best && typeof saved.best === "object" ? saved.best : {},    // cat -> procent
+    theme: saved.theme || null,
+    prefs: Object.assign({ mode: "flash", cat: "toate", qlen: 10, shuffle: true }, saved.prefs || {})
+  };
+  const persist = () => store.save(P);
+
+  // ---------- Utilitare ----------
+  const $app = document.getElementById("app");
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const nl = s => esc(s).replace(/\n/g, "<br>");
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const catName = id => id === "toate" ? "Toate" : (DATA.categories.find(c => c.id === id) || {}).name || id;
+  const byCat = (list, cat) => cat === "toate" ? list : list.filter(x => x.cat === cat);
+  const LETTERS = ["A", "B", "C", "D", "E", "F"];
+  const TYPE_LABEL = { mcq: "Grilă", tf: "Adevărat / Fals", order: "Ordonare", match: "Asociere" };
+
+  // ---------- Temă ----------
+  function applyTheme() {
+    let t = P.theme;
+    if (!t) t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+    const m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute("content", t === "dark" ? "#1a1311" : "#7a1f2b");
+    return t;
+  }
+  function toggleTheme() {
+    const cur = document.documentElement.getAttribute("data-theme");
+    P.theme = cur === "dark" ? "light" : "dark";
+    persist(); applyTheme();
+    document.querySelectorAll("[data-theme-btn]").forEach(b => b.textContent = P.theme === "dark" ? "☀" : "☾");
+  }
+  applyTheme();
+
+  function header(title, back) {
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
+    return `<div class="top">
+      ${back ? `<button class="icon-btn" data-act="home" aria-label="Înapoi la ecranul principal">←</button>` : ""}
+      <h1>${esc(title)}</h1>
+      <button class="icon-btn" data-theme-btn data-act="theme" aria-label="Schimbă tema (luminoasă/întunecată)">${dark ? "☀" : "☾"}</button>
+    </div>`;
+  }
+
+  // Delegare globală pentru butoanele comune
+  $app.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]");
+    if (!b) return;
+    const act = b.getAttribute("data-act");
+    if (act === "home") renderHome();
+    else if (act === "theme") toggleTheme();
+  });
+
+  let keyHandler = null;
+  function setKeys(fn) { keyHandler = fn; }
+  document.addEventListener("keydown", e => { if (keyHandler) keyHandler(e); });
+
+  function screen(html) {
+    setKeys(null);
+    $app.innerHTML = html;
+    window.scrollTo(0, 0);
+  }
+
+  // ---------- Statistici ----------
+  function knownPct(cat) {
+    const cards = byCat(DATA.flashcards, cat);
+    if (!cards.length) return 0;
+    const k = cards.filter(c => P.cards[c.id] && P.cards[c.id].s === "known").length;
+    return Math.round(k / cards.length * 100);
+  }
+
+  // =========================================================
+  // ACASĂ
+  // =========================================================
+  function renderHome() {
+    const pr = P.prefs;
+    const modes = [
+      { id: "flash", g: "❦", t: "Flashcards" },
+      { id: "quiz", g: "✠", t: "Quiz" },
+      { id: "recap", g: "❧", t: "Recapitulare" }
+    ];
+    const cats = [...DATA.categories.map(c => c.id), "toate"];
+    const catHtml = cats.map(id => {
+      const pct = knownPct(id);
+      const best = P.best[id];
+      const nC = byCat(DATA.flashcards, id).length, nQ = byCat(DATA.quiz, id).length;
+      return `<button class="cat" data-cat="${id}" aria-pressed="${pr.cat === id}">
+        <div class="cat-row"><span class="cat-name">${esc(catName(id))}</span>
+        <span class="cat-meta">${pct}% știute · quiz: ${best != null ? best + "%" : "—"}</span></div>
+        <div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
+        <span class="sr">${nC} carduri, ${nQ} întrebări</span>
+      </button>`;
+    }).join("");
+
+    screen(`
+      ${header("Bacalaureat · Limba română", false)}
+      <div class="hero">
+        <div class="orn">✦ ❦ ✦</div>
+        <h2>${esc(DATA.title)}</h2>
+        <p>${esc(DATA.subtitle)}</p>
+      </div>
+      <div class="section-title">Alege modul</div>
+      <div class="modes">${modes.map(m => `<button class="mode" data-mode="${m.id}" aria-pressed="${pr.mode === m.id}"><span class="g">${m.g}</span><span class="t">${m.t}</span></button>`).join("")}</div>
+      <div id="catBlock" ${pr.mode === "recap" ? "hidden" : ""}>
+        <div class="section-title">Alege categoria</div>
+        <div class="cats">${catHtml}</div>
+        <div class="opts" id="optFlash" ${pr.mode !== "flash" ? "hidden" : ""}>
+          <label class="toggle"><input type="checkbox" id="shuf" ${pr.shuffle ? "checked" : ""}> Amestecă cardurile</label>
+        </div>
+        <div class="opts" id="optQuiz" ${pr.mode !== "quiz" ? "hidden" : ""}>
+          <span style="color:var(--muted)">Număr de întrebări:</span>
+          <div class="seg" role="group" aria-label="Număr de întrebări">
+            <button data-qlen="10" aria-pressed="${pr.qlen === 10}">10</button>
+            <button data-qlen="20" aria-pressed="${pr.qlen === 20}">20</button>
+          </div>
+        </div>
+      </div>
+      <button class="btn primary block start" id="startBtn">Începe</button>
+      <div class="foot">
+        ${DATA.flashcards.length} flashcards · ${DATA.quiz.length} întrebări de quiz<br>
+        <button class="link-btn" id="resetBtn">Resetează progresul</button>
+      </div>
+    `);
+
+    const upd = () => {
+      document.querySelectorAll("[data-mode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === pr.mode));
+      document.querySelectorAll("[data-cat]").forEach(b => b.setAttribute("aria-pressed", b.dataset.cat === pr.cat));
+      document.querySelectorAll("[data-qlen]").forEach(b => b.setAttribute("aria-pressed", +b.dataset.qlen === pr.qlen));
+      document.getElementById("catBlock").hidden = pr.mode === "recap";
+      document.getElementById("optFlash").hidden = pr.mode !== "flash";
+      document.getElementById("optQuiz").hidden = pr.mode !== "quiz";
+      const sb = document.getElementById("startBtn");
+      sb.textContent = pr.mode === "recap" ? "Deschide recapitularea" : pr.mode === "quiz" ? "Începe quizul" : "Începe flashcards";
+      persist();
+    };
+    $app.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => { pr.mode = b.dataset.mode; upd(); });
+    $app.querySelectorAll("[data-cat]").forEach(b => b.onclick = () => { pr.cat = b.dataset.cat; upd(); });
+    $app.querySelectorAll("[data-qlen]").forEach(b => b.onclick = () => { pr.qlen = +b.dataset.qlen; upd(); });
+    document.getElementById("shuf").onchange = e => { pr.shuffle = e.target.checked; persist(); };
+    document.getElementById("startBtn").onclick = () => {
+      if (pr.mode === "flash") startFlash(pr.cat);
+      else if (pr.mode === "quiz") startQuiz(buildQuiz(pr.cat, pr.qlen), pr.cat, false);
+      else renderRecap();
+    };
+    document.getElementById("resetBtn").onclick = () => {
+      if (confirm("Ștergi tot progresul (carduri știute și scoruri)?")) { P.cards = {}; P.best = {}; persist(); renderHome(); }
+    };
+    upd();
+  }
+
+  // =========================================================
+  // FLASHCARDS
+  // =========================================================
+  let F = null;
+
+  function startFlash(cat) {
+    const cards = byCat(DATA.flashcards, cat);
+    const st = id => (P.cards[id] || {}).s;
+    const mix = arr => P.prefs.shuffle ? shuffle(arr) : arr;
+    // Prioritate: întâi cele marcate „Nu știu” (cele mai ratate primele), apoi cele nevăzute, apoi cele știute.
+    const unknown = mix(cards.filter(c => st(c.id) === "unknown"))
+      .sort((a, b) => ((P.cards[b.id] || {}).miss || 0) - ((P.cards[a.id] || {}).miss || 0));
+    const unseen = mix(cards.filter(c => !st(c.id)));
+    const known = mix(cards.filter(c => st(c.id) === "known"));
+    F = {
+      cat,
+      total: cards.length,
+      queue: [...unknown, ...unseen, ...known],
+      seen: new Set(),
+      again: new Set(),   // carduri care vor reveni în sesiune
+      knownNow: 0,
+      flipped: false,
+      busy: false
+    };
+    renderFlash();
+  }
+
+  function renderFlash() {
+    if (!F.queue.length) return renderFlashDone();
+    const c = F.queue[0];
+    F.seen.add(c.id);
+    F.flipped = false;
+    const isRepeat = F.again.has(c.id);
+    screen(`
+      ${header("Flashcards · " + catName(F.cat), true)}
+      <div class="counter">
+        <span><strong>${F.seen.size}/${F.total}</strong> ${isRepeat ? '<span class="pill">↻ reluare</span>' : ""}</span>
+        <span>De reluat: ${F.again.size} · Știute: ${F.knownNow}</span>
+      </div>
+      <div class="stage">
+        <div class="swipe" id="swipe" role="button" tabindex="0" aria-label="Card. Apasă pentru a-l întoarce.">
+          <span class="stamp no" id="stNo">NU ȘTIU</span>
+          <span class="stamp yes" id="stYes">ȘTIU</span>
+          <div class="flip" id="flip">
+            <div class="face front">
+              <div class="lbl">${esc(catName(c.cat))}</div>
+              <div class="main">${nl(c.q)}</div>
+              <div class="hint">Atinge cardul ca să vezi răspunsul</div>
+            </div>
+            <div class="face back" aria-hidden="true">
+              <div class="lbl">Răspuns</div>
+              <div class="main">${nl(c.a)}</div>
+              ${c.ctx ? `<div class="ctx">${nl(c.ctx)}</div>` : ""}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-actions">
+        <button class="btn no" id="bNo">✗ Nu știu</button>
+        <button class="btn" id="bFlip" aria-label="Întoarce cardul">⟲</button>
+        <button class="btn yes" id="bYes">✓ Știu</button>
+      </div>
+      <div class="kbd-hint">Tastatură: Spațiu = întoarce · ← = Nu știu · → = Știu · Pe telefon: glisează stânga/dreapta</div>
+    `);
+
+    const swipe = document.getElementById("swipe");
+    const flip = document.getElementById("flip");
+    const stNo = document.getElementById("stNo"), stYes = document.getElementById("stYes");
+    const doFlip = () => {
+      F.flipped = !F.flipped;
+      flip.classList.toggle("on", F.flipped);
+      flip.querySelector(".front").setAttribute("aria-hidden", F.flipped);
+      flip.querySelector(".back").setAttribute("aria-hidden", !F.flipped);
+    };
+
+    // Swipe + tap
+    let sx = 0, sy = 0, dx = 0, drag = false, down = false, pid = null;
+    swipe.addEventListener("pointerdown", e => {
+      if (F.busy) return;
+      down = true; drag = false; sx = e.clientX; sy = e.clientY; dx = 0; pid = e.pointerId;
+      swipe.classList.remove("anim");
+    });
+    swipe.addEventListener("pointermove", e => {
+      if (!down || e.pointerId !== pid) return;
+      dx = e.clientX - sx;
+      const dy = e.clientY - sy;
+      if (!drag && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) {
+        drag = true;
+        try { swipe.setPointerCapture(pid); } catch (_) {}
+      }
+      if (drag) {
+        swipe.style.transform = `translateX(${dx}px) rotate(${dx / 22}deg)`;
+        stYes.style.opacity = Math.max(0, Math.min(1, dx / 100));
+        stNo.style.opacity = Math.max(0, Math.min(1, -dx / 100));
+      }
+    });
+    const end = e => {
+      if (!down || (e && e.pointerId !== pid)) return;
+      down = false;
+      if (drag) {
+        if (Math.abs(dx) > 90) { answer(dx > 0); }
+        else {
+          swipe.classList.add("anim");
+          swipe.style.transform = "";
+          stYes.style.opacity = 0; stNo.style.opacity = 0;
+        }
+      } else if (e && e.type === "pointerup") {
+        doFlip();
+      }
+    };
+    swipe.addEventListener("pointerup", end);
+    swipe.addEventListener("pointercancel", end);
+    swipe.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); doFlip(); } });
+
+    document.getElementById("bFlip").onclick = doFlip;
+    document.getElementById("bYes").onclick = () => answer(true);
+    document.getElementById("bNo").onclick = () => answer(false);
+
+    setKeys(e => {
+      if (e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+      if (e.key === " " || e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); doFlip(); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); answer(true); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); answer(false); }
+    });
+
+    function answer(yes) {
+      if (F.busy) return;
+      F.busy = true;
+      const rec = P.cards[c.id] || { miss: 0 };
+      if (yes) {
+        rec.s = "known";
+        F.knownNow++;
+        F.again.delete(c.id);
+      } else {
+        rec.s = "unknown";
+        rec.miss = (rec.miss || 0) + 1;
+        F.again.add(c.id);
+      }
+      P.cards[c.id] = rec;
+      persist();
+      F.queue.shift();
+      if (!yes) {
+        // revine în aceeași sesiune, după câteva carduri
+        const pos = Math.min(F.queue.length, 3);
+        F.queue.splice(pos, 0, c);
+      }
+      swipe.classList.add("anim");
+      (yes ? stYes : stNo).style.opacity = 1;
+      swipe.style.transform = `translateX(${yes ? 130 : -130}%) rotate(${yes ? 18 : -18}deg)`;
+      swipe.style.opacity = "0";
+      setTimeout(() => { F.busy = false; renderFlash(); }, 260);
+    }
+  }
+
+  function renderFlashDone() {
+    screen(`
+      ${header("Flashcards · " + catName(F.cat), true)}
+      <div class="done-box">
+        <div class="orn">❦</div>
+        <h2>Sesiune încheiată!</h2>
+        <p>Ai parcurs toate cele ${F.total} carduri din „${esc(catName(F.cat))}”.<br>
+        Progres total în categorie: <strong>${knownPct(F.cat)}%</strong> știute.</p>
+      </div>
+      <div class="actions-col">
+        <button class="btn primary" id="again">Reia categoria</button>
+        <button class="btn" id="toQuiz">Treci la quiz</button>
+        <button class="btn" data-act="home">Acasă</button>
+      </div>
+    `);
+    document.getElementById("again").onclick = () => startFlash(F.cat);
+    document.getElementById("toQuiz").onclick = () => startQuiz(buildQuiz(F.cat, P.prefs.qlen), F.cat, false);
+  }
+
+  // =========================================================
+  // QUIZ
+  // =========================================================
+  let Q = null;
+
+  function buildQuiz(cat, n) {
+    // amestecă, apoi intercalează tipurile ca să fie variate
+    const groups = {};
+    shuffle(byCat(DATA.quiz, cat)).forEach(q => (groups[q.type] = groups[q.type] || []).push(q));
+    const types = shuffle(Object.keys(groups));
+    const out = [];
+    while (out.length < n && types.some(t => groups[t].length)) {
+      for (const t of types) { if (groups[t].length && out.length < n) out.push(groups[t].shift()); }
+    }
+    return out;
+  }
+
+  function startQuiz(questions, cat, isRetry) {
+    Q = { questions, cat, isRetry, i: 0, score: 0, wrong: [] };
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    if (Q.i >= Q.questions.length) return renderResult();
+    const q = Q.questions[Q.i];
+    const n = Q.questions.length;
+    let body = "";
+    if (q.type === "mcq") {
+      const opts = shuffle(q.options.map((o, idx) => ({ o, idx })));
+      body = `<div class="choices">${opts.map((x, k) => `<button class="choice" data-idx="${x.idx}"><span class="k">${LETTERS[k]}</span><span>${esc(x.o)}</span></button>`).join("")}</div>`;
+    } else if (q.type === "tf") {
+      body = `<div class="choices tf"><button class="choice" data-tf="1">Adevărat</button><button class="choice" data-tf="0">Fals</button></div>`;
+    } else if (q.type === "order") {
+      let order = q.items.map((_, i) => i);
+      do { order = shuffle(order); } while (order.every((v, i) => v === i));
+      body = `<p class="match-help">Trage de ⠿ sau folosește săgețile ▲▼. Primul eveniment sus.</p>
+        <ol class="order" id="ord">${order.map(i => `<li data-i="${i}"><span class="handle" aria-hidden="true">⠿</span><span class="num"></span><span class="txt">${esc(q.items[i])}</span><span class="mv"><button data-up aria-label="Mută mai sus">▲</button><button data-down aria-label="Mută mai jos">▼</button></span></li>`).join("")}</ol>`;
+    } else if (q.type === "match") {
+      const rOrder = shuffle(q.right.map((_, i) => i));
+      const lOrder = shuffle(q.left.map((_, i) => i));
+      const [lh, rh] = q.labels || ["Element", "Pereche"];
+      body = `<p class="match-help">Atinge un element din stânga, apoi perechea lui. Atinge o pereche făcută ca s-o refaci.</p>
+        <div class="match">
+          <div class="col"><div class="colh">${esc(lh)}</div>${lOrder.map(i => `<button class="mi left" data-l="${i}"><span class="b"></span><span class="t">${esc(q.left[i])}</span></button>`).join("")}</div>
+          <div class="col"><div class="colh">${esc(rh)}</div>${rOrder.map(i => `<button class="mi right" data-r="${i}"><span class="b"></span><span class="t">${esc(q.right[i])}</span></button>`).join("")}</div>
+        </div>`;
+    }
+    const needsCheck = q.type === "order" || q.type === "match";
+    screen(`
+      ${header(`Quiz · ${Q.isRetry ? "Greșelile" : catName(Q.cat)}`, true)}
+      <div class="counter"><span><strong>${Q.i + 1}/${n}</strong></span><span>Scor: ${Q.score}</span></div>
+      <div class="progress-line"><i style="width:${(Q.i / n) * 100}%"></i></div>
+      <div class="qtype">${TYPE_LABEL[q.type]} · ${esc(catName(q.cat))}</div>
+      <div class="qtext">${esc(q.q)}</div>
+      ${body}
+      <div id="fb"></div>
+      <div class="qactions">
+        ${needsCheck ? `<button class="btn primary block" id="check" ${q.type === "match" ? "disabled" : ""}>Verifică</button>` : ""}
+        <button class="btn primary block" id="next" hidden>${Q.i + 1 < n ? "Următoarea întrebare →" : "Vezi rezultatul"}</button>
+      </div>
+    `);
+
+    const next = document.getElementById("next");
+    next.onclick = () => { Q.i++; renderQuestion(); };
+
+    const finish = (ok, yourText, correctText) => {
+      if (ok) Q.score++;
+      else Q.wrong.push({ q, your: yourText, correct: correctText });
+      const fb = document.getElementById("fb");
+      fb.innerHTML = `<div class="feedback ${ok ? "ok" : "bad"}" role="status">
+        <strong>${ok ? "✓ Corect!" : "✗ Greșit"}</strong>
+        <div>${esc(q.expl)}</div>
+        ${!ok && correctText ? `<div class="corr"><b>Răspuns corect:</b> ${nl(correctText)}</div>` : ""}
+      </div>`;
+      const chk = document.getElementById("check");
+      if (chk) chk.hidden = true;
+      next.hidden = false;
+      next.focus({ preventScroll: true });
+      fb.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      setKeys(e => { if (e.key === "Enter" && document.activeElement !== next) { e.preventDefault(); next.click(); } });
+    };
+
+    if (q.type === "mcq") {
+      const btns = [...$app.querySelectorAll(".choice")];
+      btns.forEach(b => b.onclick = () => {
+        const idx = +b.dataset.idx, ok = idx === q.answer;
+        btns.forEach(x => { x.disabled = true; if (+x.dataset.idx === q.answer) x.classList.add("correct"); });
+        if (!ok) b.classList.add("wrong");
+        finish(ok, q.options[idx], q.options[q.answer]);
+      });
+      setKeys(e => { const k = LETTERS.indexOf(e.key.toUpperCase()); if (k >= 0 && k < btns.length && !btns[k].disabled) btns[k].click(); });
+    } else if (q.type === "tf") {
+      const btns = [...$app.querySelectorAll(".choice")];
+      btns.forEach(b => b.onclick = () => {
+        const v = b.dataset.tf === "1", ok = v === q.answer;
+        btns.forEach(x => { x.disabled = true; if ((x.dataset.tf === "1") === q.answer) x.classList.add("correct"); });
+        if (!ok) b.classList.add("wrong");
+        finish(ok, v ? "Adevărat" : "Fals", q.answer ? "Adevărat" : "Fals");
+      });
+      setKeys(e => { const k = e.key.toLowerCase(); if (k === "a") btns[0].click(); else if (k === "f") btns[1].click(); });
+    } else if (q.type === "order") {
+      setupOrder(q, finish);
+    } else if (q.type === "match") {
+      setupMatch(q, finish);
+    }
+  }
+
+  function setupOrder(q, finish) {
+    const ol = document.getElementById("ord");
+    let locked = false;
+    const refresh = () => {
+      const lis = [...ol.children];
+      lis.forEach((li, k) => {
+        li.querySelector(".num").textContent = k + 1;
+        li.querySelector("[data-up]").disabled = locked || k === 0;
+        li.querySelector("[data-down]").disabled = locked || k === lis.length - 1;
+      });
+    };
+    refresh();
+    ol.addEventListener("click", e => {
+      if (locked) return;
+      const li = e.target.closest("li"); if (!li) return;
+      if (e.target.closest("[data-up]") && li.previousElementSibling) { ol.insertBefore(li, li.previousElementSibling); refresh(); li.querySelector("[data-up]").disabled || li.querySelector("[data-up]").focus(); }
+      else if (e.target.closest("[data-down]") && li.nextElementSibling) { ol.insertBefore(li.nextElementSibling, li); refresh(); li.querySelector("[data-down]").disabled || li.querySelector("[data-down]").focus(); }
+    });
+    // Drag & drop cu pointer (deget sau mouse)
+    ol.querySelectorAll(".handle").forEach(h => {
+      h.addEventListener("pointerdown", e => {
+        if (locked) return;
+        e.preventDefault();
+        const li = h.closest("li");
+        li.classList.add("dragging");
+        try { h.setPointerCapture(e.pointerId); } catch (_) {}
+        const move = ev => {
+          const y = ev.clientY;
+          const sibs = [...ol.children].filter(x => x !== li);
+          let before = null;
+          for (const s of sibs) { const r = s.getBoundingClientRect(); if (y < r.top + r.height / 2) { before = s; break; } }
+          if (before !== li.nextElementSibling) {
+            ol.insertBefore(li, before);
+            refresh();
+          }
+        };
+        const up = () => {
+          li.classList.remove("dragging");
+          h.removeEventListener("pointermove", move);
+          h.removeEventListener("pointerup", up);
+          h.removeEventListener("pointercancel", up);
+        };
+        h.addEventListener("pointermove", move);
+        h.addEventListener("pointerup", up);
+        h.addEventListener("pointercancel", up);
+      });
+    });
+    document.getElementById("check").onclick = () => {
+      locked = true;
+      const lis = [...ol.children];
+      const got = lis.map(li => +li.dataset.i);
+      const ok = got.every((v, k) => v === k);
+      lis.forEach((li, k) => li.classList.add(+li.dataset.i === k ? "correct" : "wrong"));
+      refresh();
+      finish(ok, got.map(i => q.items[i]).join(" → "), q.items.join(" → "));
+    };
+  }
+
+  function setupMatch(q, finish) {
+    const pairs = {};      // stânga -> dreapta
+    let sel = null;        // stânga selectată
+    let locked = false;
+    const lefts = [...$app.querySelectorAll(".mi.left")];
+    const rights = [...$app.querySelectorAll(".mi.right")];
+    const check = document.getElementById("check");
+
+    const paint = () => {
+      const order = Object.keys(pairs).map(Number);
+      lefts.forEach(b => {
+        const l = +b.dataset.l, bd = b.querySelector(".b");
+        b.className = "mi left" + (sel === l ? " sel" : "") + (l in pairs ? " paired" : "");
+        bd.className = "b";
+        bd.textContent = "";
+        if (l in pairs) { const k = order.indexOf(l); bd.classList.add("c" + (k % 6)); bd.textContent = k + 1; }
+      });
+      rights.forEach(b => {
+        const r = +b.dataset.r, bd = b.querySelector(".b");
+        const l = Object.keys(pairs).find(k => pairs[k] === r);
+        b.className = "mi right" + (l != null ? " paired" : "");
+        bd.className = "b"; bd.textContent = "";
+        if (l != null) { const k = order.indexOf(+l); bd.classList.add("c" + (k % 6)); bd.textContent = k + 1; }
+      });
+      check.disabled = Object.keys(pairs).length !== q.left.length;
+    };
+
+    lefts.forEach(b => b.onclick = () => {
+      if (locked) return;
+      const l = +b.dataset.l;
+      if (l in pairs) delete pairs[l];
+      sel = l;
+      paint();
+    });
+    rights.forEach(b => b.onclick = () => {
+      if (locked) return;
+      const r = +b.dataset.r;
+      const owner = Object.keys(pairs).find(k => pairs[k] === r);
+      if (sel == null) { if (owner != null) { delete pairs[owner]; paint(); } return; }
+      if (owner != null) delete pairs[owner];
+      pairs[sel] = r;
+      // selectează automat următorul element liber din stânga
+      const free = lefts.map(x => +x.dataset.l).find(x => !(x in pairs));
+      sel = free === undefined ? null : free;
+      paint();
+    });
+    paint();
+
+    check.onclick = () => {
+      locked = true;
+      let ok = true;
+      lefts.forEach(b => {
+        const l = +b.dataset.l, good = pairs[l] === l;
+        if (!good) ok = false;
+        b.classList.add(good ? "correct" : "wrong");
+        if (!good) b.querySelector(".t").insertAdjacentHTML("beforeend", `<span class="fix">✓ ${esc(q.right[l])}</span>`);
+      });
+      rights.forEach(b => b.disabled = true);
+      lefts.forEach(b => b.disabled = true);
+      const your = q.left.map((t, l) => `${t} ↔ ${q.right[pairs[l]]}`).join("\n");
+      const corr = q.left.map((t, l) => `${t} ↔ ${q.right[l]}`).join("\n");
+      finish(ok, your, corr);
+    };
+  }
+
+  function renderResult() {
+    const n = Q.questions.length;
+    const pct = n ? Math.round(Q.score / n * 100) : 0;
+    let isBest = false;
+    if (!Q.isRetry && n) {
+      if (P.best[Q.cat] == null || pct > P.best[Q.cat]) { P.best[Q.cat] = pct; isBest = true; persist(); }
+    }
+    const msg = pct === 100 ? "Perfect! Ești pregătit(ă)." : pct >= 80 ? "Foarte bine!" : pct >= 50 ? "Bun început. Mai repetă greșelile." : "Mai exersează. Recapitularea te ajută.";
+    screen(`
+      ${header("Rezultat", true)}
+      <div class="result">
+        <div class="score-ring" style="--p:${pct}"><div>${pct}%</div></div>
+        <h2>${Q.score} din ${n} corecte</h2>
+        <p>${msg}${isBest ? " · Nou record! ★" : ""}</p>
+        ${!Q.isRetry && n < P.prefs.qlen ? `<p style="font-size:.85rem;margin-top:6px">Categoria are ${n} întrebări disponibile.</p>` : ""}
+      </div>
+      ${Q.wrong.length ? `<div class="section-title">Greșelile tale</div>
+      <div class="mistakes">${Q.wrong.map(w => `<div class="mistake">
+        <div class="mq">${esc(w.q.q)}</div>
+        <div class="ma"><span class="y">✗ Răspunsul tău:</span> ${nl(w.your)}</div>
+        <div class="ma"><span class="c">✓ Corect:</span> ${nl(w.correct)}</div>
+        <div class="me">${esc(w.q.expl)}</div>
+      </div>`).join("")}</div>` : ""}
+      <div class="actions-col">
+        ${Q.wrong.length ? `<button class="btn primary" id="retry">Refă doar greșelile (${Q.wrong.length})</button>` : ""}
+        <button class="btn ${Q.wrong.length ? "" : "primary"}" id="newQ">Quiz nou</button>
+        <button class="btn" data-act="home">Acasă</button>
+      </div>
+    `);
+    const r = document.getElementById("retry");
+    if (r) r.onclick = () => startQuiz(shuffle(Q.wrong.map(w => w.q)), Q.cat, true);
+    document.getElementById("newQ").onclick = () => startQuiz(buildQuiz(Q.cat, P.prefs.qlen), Q.cat, false);
+  }
+
+  // =========================================================
+  // RECAPITULARE
+  // =========================================================
+  function renderRecap() {
+    screen(`
+      ${header("Recapitulare", true)}
+      <div class="recap">
+        <div class="section-title">Schema eseului · Particularitățile nuvelei istorice</div>
+        <div class="ctrl"><button class="btn small" id="openAll">Deschide tot</button><button class="btn small" id="closeAll">Închide tot</button></div>
+        ${DATA.essay.map((p, k) => `<details ${k === 0 ? "open" : ""}>
+          <summary><span class="sec">${esc(p.n)}</span>${esc(p.title)}</summary>
+          <ul>${p.points.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+        </details>`).join("")}
+
+        <div class="section-title">Rezumat pe capitole</div>
+        ${DATA.chapters.map(c => `<article class="chap">
+          <h3>Capitolul ${esc(c.num)}</h3>
+          <blockquote class="motto">${esc(c.motto)}</blockquote>
+          ${c.text.map(t => `<p>${esc(t)}</p>`).join("")}
+        </article>`).join("")}
+
+        <div class="note">
+          <b>Atenție la mottoul capitolului al IV-lea!</b><br>
+          Mottoul: <span class="q">„De mă voi <b>scula</b>, pre mulți am să popesc și eu!”</span><br>
+          Replica din text, citată în eseu (§6): <span class="q">„Dar de mă voi <b>îndrepta</b>, pre mulți am să popesc și eu!”</span>
+        </div>
+      </div>
+      <div class="actions-col">
+        <button class="btn primary" data-act="home">Acasă</button>
+      </div>
+    `);
+    document.getElementById("openAll").onclick = () => $app.querySelectorAll("details").forEach(d => d.open = true);
+    document.getElementById("closeAll").onclick = () => $app.querySelectorAll("details").forEach(d => d.open = false);
+  }
+
+  renderHome();
+})();
+</script>
+</body>
+</html>
